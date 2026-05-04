@@ -1,0 +1,16 @@
+flask_output.log
+tempmain.py
+test_*.py
+outputs/
+*.docx
+*.pdf
+*.log
+*.db
+history.db
+firebase_service_account.json
+cookies.txt
+.env
+venv/
+uploads/
+__pycache__/
+*.pyc

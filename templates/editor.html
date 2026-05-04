@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Global University Portal | Workspace</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0F294A;
+            --secondary: #1E3A5F;
+            --accent: #C89B3C;
+            --bg-color: #F8FAFC;
+            --card-bg: #FFFFFF;
+            --text-main: #334155;
+            --text-light: #64748B;
+            --border: #E2E8F0;
+            --success: #059669;
+            --danger: #DC2626;
+            --warning: #D97706;
+            --info-bg: #F0F9FF;
+            --info-border: #BAE6FD;
+            --info-text: #0369A1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar .title {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .navbar .title span {
+            color: var(--accent);
+        }
+
+        .navbar ul {
+            list-style: none;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .navbar ul li a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .navbar ul li a:hover {
+            color: var(--primary);
+            background-color: #F1F5F9;
+        }
+
+
+        /* Workspace Layout */
+        .workspace-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            background-color: #E2E8F0;
+            /* Document background color like Word */
+        }
+
+        /* Center Document Area */
+        .editor-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 40px;
+            overflow-y: auto;
+            align-items: center;
+        }
+
+        .action-bar {
+            width: 100%;
+            max-width: 850px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background: var(--card-bg);
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
+        }
+
+        .action-bar h2 {
+            font-size: 16px;
+            color: var(--primary);
+            font-weight: 600;
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 400px;
+        }
+
+        .document-wrapper {
+            width: 100%;
+            max-width: 850px;
+            /* Standard A4ish width */
+            background: var(--card-bg);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            margin-bottom: 40px;
+        }
+
+        textarea {
+            flex: 1;
+            width: 100%;
+            padding: 40px 50px;
+            font-family: 'Times New Roman', Times, serif;
+            /* Professional academic font */
+            font-size: 16px;
+            line-height: 1.6;
+            border: none;
+            resize: none;
+            color: #000;
+            background: transparent;
+        }
+
+        textarea:focus {
+            outline: none;
+        }
+
+        /* Sidebars */
+        .sidebar {
+            width: 320px;
+            background-color: var(--card-bg);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.02);
+            z-index: 5;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            background-color: #F8FAFC;
+        }
+
+        .sidebar-header h3 {
+            font-size: 15px;
+            color: var(--primary);
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -0.2px;
+        }
+
+        .sidebar-content {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            transition: opacity 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .btn-warning {
+            background-color: var(--warning);
+            color: white;
+        }
+
+        /* History Items */
+        .history-item {
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background-color: var(--card-bg);
+        }
+
+        .history-item:hover {
+            border-color: var(--primary);
+        }
+
+        .history-item.active {
+            background-color: var(--info-bg);
+            border-color: var(--info-border);
+        }
+
+        .history-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .history-time {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .badge-latest {
+            font-size: 10px;
+            background: var(--success);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 12px;
+            text-transform: uppercase;
+        }
+
+        /* Analytics Box */
+        .analytics-box {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            background-color: var(--card-bg);
+        }
+
+        .analytics-box.brand {
+            border-left: 4px solid var(--primary);
+        }
+
+        .analytics-box.warning {
+            border-left: 4px solid var(--warning);
+            background-color: #FFFBEB;
+        }
+
+        .analytics-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-light);
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .analytics-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .analytics-value.good {
+            color: var(--success);
+        }
+
+        .analytics-value.warn {
+            color: var(--warning);
+        }
+
+        .banner-warning {
+            background-color: #FFFBEB;
+            border: 1px solid #FDE68A;
+            padding: 12px 20px;
+            color: #92400E;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 850px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="navbar">
+        <div class="title">🏛️ Global University <span>Workspace</span></div>
+        <ul>
+            <li><a href="/papers">Papers Hub</a></li>
+            <li><a href="/upload">Upload</a></li>
+            <li><a href="/logs">Activity Logs</a></li>
+            {% if nav_can_manage_users %}
+            <li><a href="/admin">Manage Users</a></li>
+            {% endif %}
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </div>
+
+    <div class="workspace-container">
+
+        <!-- Center Editor Area -->
+        <div class="editor-section">
+            <div class="action-bar">
+                <h2>Source: {{ paper.filename }}</h2>
+                <div style="display: flex; gap: 10px;">
+                    <a href="{{ url_for('download', paper_id=paper.id) }}" class="btn btn-success">Export DOCX</a>
+                    <a href="{{ url_for('download_pdf', paper_id=paper.id) }}" class="btn btn-danger">Export PDF</a>
+                </div>
+            </div>
+
+            {% if viewing_old %}
+            <div class="banner-warning">
+                <div>
+                    <strong>Historical Record (Rev-{{ current_version }})</strong> &mdash; You are viewing a past
+                    revision.
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <form action="{{ url_for('restore_version', paper_id=paper.id, version=current_version) }}"
+                        method="POST" style="margin:0;">
+                        <button type="submit" class="btn btn-warning">Restore Revision</button>
+                    </form>
+                    <a href="{{ url_for('editor', paper_id=paper.id) }}"
+                        style="color: #92400E; font-size: 13px; font-weight: 600;">Cancel</a>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="document-wrapper">
+                <form action="{{ url_for('save_edit', paper_id=paper.id) }}" method="POST"
+                    style="display: flex; flex-direction: column; height: 100%;">
+
+                    <textarea name="content" required spelcheck="false" {% if viewing_old %}readonly
+                        style="background-color: #F8FAFC; color: #64748B;" {% endif %}>{{ content }}</textarea>
+
+                    {% if not viewing_old %}
+                    <div
+                        style="background-color: #F8FAFC; padding: 12px 20px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 12px; color: var(--text-light);">Autosave is disabled. Manual save
+                            creates a new revision log.</span>
+                        <button type="submit" class="btn btn-primary">Commit Changes</button>
+                    </div>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+
+        <!-- Right Sidebars -->
+        <div style="display: flex;">
+
+            <!-- Analysis Sidebar -->
+            <div class="sidebar" style="background-color: var(--info-bg);">
+                <div class="sidebar-header"
+                    style="background-color: transparent; border-bottom: 1px solid var(--info-border);">
+                    <h3 style="color: var(--info-text);">AI Compliance Analysis</h3>
+                </div>
+
+                <div class="sidebar-content">
+                    <p style="font-size: 13px; color: var(--info-text); margin-bottom: 16px; opacity: 0.8;">
+                        Evaluate strict adherence to the uploaded syllabus parameter constraints.
+                    </p>
+
+                    <button id="analyze-btn" class="btn btn-primary" style="width: 100%; margin-bottom: 24px;"
+                        onclick="runAnalytics()">Execute Analysis</button>
+
+                    <div id="analytics-loading" style="display: none; text-align: center; margin-bottom: 24px;">
+                        <div style="font-size: 13px; color: var(--primary); font-weight: 600;">Cross-referencing
+                            parameters...</div>
+                        <div style="font-size: 12px; color: var(--text-light);">Avg. runtime: 8s</div>
+                    </div>
+
+                    <div id="analytics-results" style="display: none;">
+                        <div class="analytics-box brand">
+                            <div class="analytics-label">Syllabus Coverage</div>
+                            <div class="analytics-value good" id="score-coverage">--%</div>
+                        </div>
+
+                        <div class="analytics-box brand">
+                            <div class="analytics-label">Difficulty Rating</div>
+                            <div class="analytics-value warn" id="score-difficulty">--/10</div>
+                        </div>
+
+                        <div class="analytics-box warning">
+                            <div class="analytics-label" style="color: #B45309;">Out of Scope Warnings</div>
+                            <ul id="score-flags"
+                                style="font-size: 13px; padding-left: 16px; margin-top: 8px; color: #92400E; margin-bottom: 0;">
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History Sidebar -->
+            <div class="sidebar">
+                <div class="sidebar-header">
+                    <h3>Revision History</h3>
+                </div>
+                <div class="sidebar-content">
+                    {% for v, ts in history %}
+                    <a href="{{ url_for('view_version', paper_id=paper.id, version=v) }}"
+                        style="text-decoration: none;">
+                        <div class="history-item {% if v == current_version %}active{% endif %}">
+                            <div class="history-title">
+                                Rev-{{ v }}
+                                {% if v == paper.current_version %}
+                                <span class="badge-latest">Active</span>
+                                {% endif %}
+                            </div>
+                            <div class="history-time">{{ ts }}</div>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        async function runAnalytics() {
+            const btn = document.getElementById('analyze-btn');
+            const loading = document.getElementById('analytics-loading');
+            const results = document.getElementById('analytics-results');
+
+            btn.style.display = 'none';
+            loading.style.display = 'block';
+            results.style.display = 'none';
+
+            try {
+                const response = await fetch('/api/analytics/{{ paper.id }}');
+                const data = await response.json();
+
+                if (data.error) {
+                    alert('System Error: ' + data.error);
+                    btn.style.display = 'block';
+                } else {
+                    document.getElementById('score-coverage').innerText = data.coverage_percentage + '%';
+                    document.getElementById('score-difficulty').innerText = data.difficulty_score + '/10';
+
+                    const flagsList = document.getElementById('score-flags');
+                    flagsList.innerHTML = '';
+                    if (data.red_flags && data.red_flags.length > 0) {
+                        data.red_flags.forEach(flag => {
+                            const li = document.createElement('li');
+                            li.innerText = flag;
+                            flagsList.appendChild(li);
+                        });
+                    } else {
+                        flagsList.innerHTML = '<li>Zero compliance violations detected.</li>';
+                    }
+
+                    results.style.display = 'block';
+                }
+            } catch (err) {
+                alert('Network termination during report execution.');
+                btn.style.display = 'block';
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+
+</html>

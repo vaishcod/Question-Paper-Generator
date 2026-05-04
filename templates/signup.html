@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Global University Portal | Sign Up</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0F294A;
+            --accent: #C89B3C;
+            --bg-color: #F8FAFC;
+            --card-bg: #FFFFFF;
+            --text-main: #334155;
+            --text-light: #64748B;
+            --border: #E2E8F0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar .title {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .navbar .title span {
+            color: var(--accent);
+        }
+
+        .navbar ul {
+            list-style: none;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .navbar ul li a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .navbar ul li a:hover {
+            color: var(--primary);
+            background-color: #F1F5F9;
+        }
+
+
+        .page-wrapper {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 420px;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
+        }
+
+        h2 {
+            margin: 0 0 8px 0;
+            color: var(--primary);
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            margin: 0 0 30px 0;
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 14px;
+            color: var(--text-main);
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            box-sizing: border-box;
+            transition: all 0.2s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(15, 41, 74, 0.1);
+        }
+
+        button {
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #0b1f38;
+        }
+
+        .error {
+            background-color: #FEF2F2;
+            color: #991B1B;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            border: 1px solid #F87171;
+            font-weight: 500;
+        }
+
+        .link {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 14px;
+        }
+
+        .link a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="navbar">
+        <div class="title">🏛️ Global University <span>Portal</span></div>
+        <ul>
+            <li><a href="/login">Login</a></li>
+            <li><a href="/signup">Sign Up</a></li>
+        </ul>
+    </div>
+
+    <div class="page-wrapper">
+        <div class="card">
+            <h2>Faculty Registration</h2>
+            <p class="subtitle">Join the university's automated examination network</p>
+
+            {% if error %}
+            <div class="error">{{ error }}</div>
+            {% endif %}
+
+            <form method="post">
+                <div class="form-group">
+                    <label>University Email</label>
+                    <input type="email" name="email" placeholder="name@global.edu" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" name="password" placeholder="••••••••" required>
+                </div>
+
+                <button type="submit">Complete Registration</button>
+            </form>
+
+            <div class="link">
+                <a href="/login">Already registered? Sign in here</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function configureNavbar() {
+            const isAuthenticated = "{{ 'true' if nav_is_authenticated else 'false' }}" === "true";
+            const canManageUsers = "{{ 'true' if nav_can_manage_users else 'false' }}" === "true";
+
+            document.querySelectorAll("[data-nav='auth']").forEach((item) => {
+                item.style.display = isAuthenticated ? "" : "none";
+            });
+            document.querySelectorAll("[data-nav='guest']").forEach((item) => {
+                item.style.display = isAuthenticated ? "none" : "";
+            });
+            document.querySelectorAll("[data-nav='manage']").forEach((item) => {
+                item.style.display = canManageUsers ? "" : "none";
+            });
+        })();
+    </script>
+
+</body>
+
+</html>

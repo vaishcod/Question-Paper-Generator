@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Global University Portal | System Settings</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0F294A;
+            --accent: #C89B3C;
+            --bg-color: #F8FAFC;
+            --card-bg: #FFFFFF;
+            --text-main: #334155;
+            --text-light: #64748B;
+            --border: #E2E8F0;
+            --success: #059669;
+            --danger: #DC2626;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar .title {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .navbar .title span {
+            color: var(--accent);
+        }
+
+        .navbar ul {
+            list-style: none;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .navbar ul li a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .navbar ul li a:hover {
+            color: var(--primary);
+            background-color: #F1F5F9;
+        }
+
+
+        .container {
+            max-width: 600px;
+            margin: 60px auto;
+            padding: 0 20px;
+            width: 100%;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            color: var(--primary);
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        header p {
+            color: var(--text-light);
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+            border: 1px solid var(--border);
+        }
+
+        .info-box {
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-box.success {
+            background-color: #ECFDF5;
+            color: var(--success);
+            border: 1px solid #A7F3D0;
+        }
+
+        .info-box.warning {
+            background-color: #FFFBEB;
+            color: #92400E;
+            border: 1px solid #FDE68A;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 8px;
+        }
+
+        input[type="password"] {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 15px;
+            color: var(--text-main);
+            transition: all 0.2s ease;
+            background-color: var(--bg-color);
+        }
+
+        input[type="password"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(15, 41, 74, 0.1);
+            background-color: white;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.1s ease, opacity 0.2s ease;
+        }
+
+        .submit-btn:hover {
+            opacity: 0.95;
+        }
+
+        .submit-btn:active {
+            transform: scale(0.98);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .status-badge.active {
+            background-color: #ECFDF5;
+            color: var(--success);
+        }
+
+        .status-badge.missing {
+            background-color: #FEF2F2;
+            color: var(--danger);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="navbar">
+        <div class="title">🏛️ Global University <span>Portal</span></div>
+        <ul>
+            <li><a href="/upload">Portal</a></li>
+            <li><a href="/papers">Papers Hub</a></li>
+            <li><a href="/logs">Activity Logs</a></li>
+            {% if nav_can_manage_users %}
+            <li><a href="/admin">Manage Users</a></li>
+            {% endif %}
+            <li><a href="/settings">Settings</a></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </div>
+
+    <header class="container" style="margin-bottom: 20px;">
+        <h1>System Configurations</h1>
+        <p>Manage your backend integration credentials securely.</p>
+    </header>
+
+    <div class="container" style="margin-top: 0;">
+        <div class="card">
+
+            {% if message %}
+            <div class="info-box {{ 'success' if success else 'warning' }}">
+                {{ message }}
+            </div>
+            {% endif %}
+
+            <h2
+                style="font-size: 18px; color: var(--primary); margin-bottom: 20px; display: flex; align-items: center;">
+                OpenRouter Key Configuration
+                {% if is_configured %}
+                <span class="status-badge active">● Active</span>
+                {% else %}
+                <span class="status-badge missing">● Missing Key</span>
+                {% endif %}
+            </h2>
+
+            <p style="font-size: 14px; color: var(--text-light); margin-bottom: 20px;">
+                To generate question papers, you must link your personal OpenRouter API Key. This key is used
+                individually for your queries and is stored securely in the local application database.
+            </p>
+
+            <form method="post">
+                <div class="form-group">
+                    <label>API Key Secret</label>
+                    <input type="password" name="api_key" placeholder="sk-or-v1-..." required>
+                    {% if is_configured %}
+                    <p style="font-size: 12px; color: var(--success); margin-top: 8px;">
+                        Currently bound to: <strong>{{ masked_key }}</strong>
+                    </p>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="submit-btn" style="margin-top: 10px;">Update Secure Configuration</button>
+            </form>
+        </div>
+    </div>
+
+</body>
+
+</html>

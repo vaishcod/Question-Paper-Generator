@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Global University Portal | Papers Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0F294A;
+            --accent: #C89B3C;
+            --bg-color: #F8FAFC;
+            --card-bg: #FFFFFF;
+            --text-main: #334155;
+            --text-light: #64748B;
+            --border: #E2E8F0;
+            --success: #059669;
+            --danger: #DC2626;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar .title {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .navbar .title span {
+            color: var(--accent);
+        }
+
+        .navbar ul {
+            list-style: none;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .navbar ul li a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .navbar ul li a:hover {
+            color: var(--primary);
+            background-color: #F1F5F9;
+        }
+
+
+        .container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+            flex: 1;
+            width: 100%;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
+        }
+
+        h2 {
+            margin-bottom: 8px;
+            color: var(--primary);
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            margin-bottom: 24px;
+            color: var(--text-light);
+            font-size: 15px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 10px;
+        }
+
+        th,
+        td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        th {
+            background-color: var(--bg-color);
+            font-weight: 600;
+            color: var(--text-light);
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        th:first-child {
+            border-top-left-radius: 8px;
+        }
+
+        th:last-child {
+            border-top-right-radius: 8px;
+        }
+
+        tr:hover td {
+            background-color: #F1F5F9;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 8px;
+            color: white;
+            transition: opacity 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn-edit {
+            background-color: var(--primary);
+        }
+
+        .btn-download {
+            background-color: var(--success);
+        }
+
+        .btn-pdf {
+            background-color: var(--danger);
+        }
+
+        .badge {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-main);
+            display: inline-block;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-light);
+            font-size: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="navbar">
+        <div class="title">🏛️ Global University <span>Portal</span></div>
+        <ul>
+            <li><a href="/papers">Papers Hub</a></li>
+            <li><a href="/upload">Upload</a></li>
+            <li><a href="/logs">Activity Logs</a></li>
+            {% if nav_can_manage_users %}
+            <li><a href="/admin">Manage Users</a></li>
+            {% endif %}
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <h2>Institution Papers Hub</h2>
+            <p class="subtitle">View and safely access all verified active question papers generated by the faculty
+                network.</p>
+
+            {% if papers %}
+            <table>
+                <thead>
+                    <tr>
+                        <th width="8%">Ref ID</th>
+                        <th width="35%">Course Title & Origin</th>
+                        <th width="20%">Author / Faculty</th>
+                        <th width="12%">Revision</th>
+                        <th>Administration</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in papers %}
+                    <tr>
+                        <td style="font-weight: 600; color: var(--text-light);">{{ p.id }}</td>
+                        <td>
+                            <strong
+                                style="color: var(--primary); font-size: 15px; display: block; margin-bottom: 4px;">{{
+                                p.subject }}</strong>
+                            <span style="font-size: 12px; color: var(--text-light);">Src: {{ p.filename }}</span>
+                        </td>
+                        <td>{{ p.user_email }}</td>
+                        <td><span class="badge">Rev-{{ p.current_version }}</span></td>
+                        <td style="white-space: nowrap;">
+                            <a href="/editor/{{ p.id }}" class="btn btn-edit">Workspace</a>
+                            <a href="/download/{{ p.id }}" class="btn btn-download">DOCX</a>
+                            <a href="/download_pdf/{{ p.id }}" class="btn btn-pdf">PDF</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                <p>The academic repository is currently empty.</p>
+                <a href="/upload"
+                    style="color: var(--primary); text-decoration: none; font-weight: 600; margin-top: 10px; display: inline-block;">Generate
+                    the first Official Paper &rarr;</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Global University Portal | Generate Paper</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0F294A;
+            --accent: #C89B3C;
+            --bg-color: #F8FAFC;
+            --card-bg: #FFFFFF;
+            --text-main: #334155;
+            --text-light: #64748B;
+            --border: #E2E8F0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar .title {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .navbar .title span {
+            color: var(--accent);
+        }
+
+        .navbar ul {
+            list-style: none;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .navbar ul li a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .navbar ul li a:hover {
+            color: var(--primary);
+            background-color: #F1F5F9;
+        }
+
+
+        header {
+            background-color: var(--card-bg);
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        header h1 {
+            color: var(--primary);
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        header p {
+            color: var(--text-light);
+            font-size: 16px;
+        }
+
+        .container {
+            flex: 1;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+            width: 100%;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
+        }
+
+        .card h2 {
+            margin-bottom: 24px;
+            color: var(--primary);
+            font-size: 20px;
+            border-bottom: 2px solid var(--bg-color);
+            padding-bottom: 12px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-main);
+        }
+
+        input[type="text"],
+        input[type="file"],
+        select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--card-bg);
+            color: var(--text-main);
+            transition: all 0.2s;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(15, 41, 74, 0.1);
+        }
+
+        .file-drop-zone {
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            background-color: var(--bg-color);
+            transition: border-color 0.2s;
+        }
+
+        .file-drop-zone:hover {
+            border-color: var(--primary);
+        }
+
+        .file-drop-zone input[type="file"] {
+            background: transparent;
+            border: none;
+            padding: 0;
+            color: var(--text-main);
+        }
+
+        button.submit-btn {
+            width: 100%;
+            margin-top: 30px;
+            padding: 16px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button.submit-btn:hover {
+            background-color: #0b1f38;
+        }
+
+        .info-box {
+            background-color: #FEF2F2;
+            color: #991B1B;
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 24px;
+            border: 1px solid #F87171;
+            font-weight: 500;
+        }
+
+        footer {
+            text-align: center;
+            padding: 24px;
+            background-color: var(--card-bg);
+            color: var(--text-light);
+            font-size: 14px;
+            border-top: 1px solid var(--border);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="navbar">
+        <div class="title">🏛️ Global University <span>Portal</span></div>
+        <ul>
+            <li><a href="/papers">Papers Hub</a></li>
+            <li><a href="/upload">Upload</a></li>
+            <li><a href="/logs">Activity Logs</a></li>
+            {% if nav_can_manage_users %}
+            <li><a href="/admin">Manage Users</a></li>
+            {% endif %}
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </div>
+
+    <header>
+        <h1>Examination Submission Portal</h1>
+        <p>Upload your syllabus to automatically generate a structured question paper</p>
+    </header>
+
+    <div class="container" id="upload">
+        <div class="card">
+            <h2>Paper Configuration</h2>
+
+            {% if error %}
+            <div class="info-box">{{ error }}</div>
+            {% endif %}
+
+            <form method="post" enctype="multipart/form-data">
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Department / School</label>
+                        <select name="department" required>
+                            <option value="">Select Department</option>
+                            <option>SOES</option>
+                            <option>SOAS</option>
+                            <option>SOHAS</option>
+                            <option>School of Management</option>
+                            <option>School of Law</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Semester</label>
+                        <select name="semester" required>
+                            <option value="">Select Semester</option>
+                            <option>Semester I</option>
+                            <option>Semester II</option>
+                            <option>Semester III</option>
+                            <option>Semester IV</option>
+                            <option>Semester V</option>
+                            <option>Semester VI</option>
+                            <option>Semester VII</option>
+                            <option>Semester VIII</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label>Syllabus File (.pdf, .docx)</label>
+                        <div class="file-drop-zone">
+                            <input type="file" name="syllabus" accept=".pdf,.doc,.docx" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Exam Difficulty</label>
+                        <select name="difficulty" required>
+                            <option value="Easy">Easy (Recall & Basic)</option>
+                            <option value="Medium" selected>Medium (Balanced)</option>
+                            <option value="Hard">Hard (Application & Analysis)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Exam Format</label>
+                        <select name="exam_format" required>
+                            <option value="Mid-Term">Mid-Term (50 Marks)</option>
+                            <option value="End-Semester" selected>End-Semester (100 Marks)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label>AI Generation Core</label>
+                        <select name="model" id="model-select" required>
+                            <option value="mistralai/mistral-7b-instruct">Mistral 7B Instruct (Default)</option>
+                        </select>
+                        <small id="model-status"
+                            style="color: var(--text-light); margin-top: 6px; display: block; font-size: 12px;">Establishing
+                            securely connected backend logic...</small>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn" id="generate-btn">Generate Official Question Paper</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 Global University of Technology | Academic Integrity System</p>
+    </footer>
+
+    <script>
+        (function configureNavbar() {
+            const isAuthenticated = "{{ 'true' if nav_is_authenticated else 'false' }}" === "true";
+            const canManageUsers = "{{ 'true' if nav_can_manage_users else 'false' }}" === "true";
+
+            document.querySelectorAll("[data-nav='auth']").forEach((item) => {
+                item.style.display = isAuthenticated ? "" : "none";
+            });
+            document.querySelectorAll("[data-nav='guest']").forEach((item) => {
+                item.style.display = isAuthenticated ? "none" : "";
+            });
+            document.querySelectorAll("[data-nav='manage']").forEach((item) => {
+                item.style.display = canManageUsers ? "" : "none";
+            });
+
+            // Generate loading UX
+            const form = document.querySelector('form');
+            const submitBtn = document.getElementById('generate-btn');
+            form.addEventListener('submit', () => {
+                submitBtn.innerText = 'Analyzing Syllabus & Generating... (Please Wait)';
+                submitBtn.style.opacity = '0.7';
+                submitBtn.style.cursor = 'wait';
+            });
+        })();
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const statusEl = document.getElementById("model-status");
+            const selectEl = document.getElementById("model-select");
+
+            fetch('/api/models')
+                .then(r => r.json())
+                .then(data => {
+                    const models = data.models || [];
+                    if (models.length === 0) {
+                        statusEl.innerText = "Error: System backend unreachable.";
+                        statusEl.style.color = "#991B1B";
+                        return;
+                    }
+
+                    selectEl.innerHTML = "";
+
+                    models.forEach(m => {
+                        const opt = document.createElement('option');
+                        opt.value = m.id;
+                        let modelName = m.name || m.id;
+                        if (m.pricing && m.pricing.prompt === "0" && m.pricing.completion === "0") {
+                            modelName += " (Free Tier)";
+                        }
+                        opt.textContent = modelName;
+
+                        if (m.id === "meta-llama/llama-3-8b-instruct:free") {
+                            opt.selected = true;
+                        } else if (m.id === "mistralai/mistral-7b-instruct" && !selectEl.querySelector("option[selected]")) {
+                            opt.selected = true;
+                        }
+                        selectEl.appendChild(opt);
+                    });
+                    statusEl.innerText = `Connected securely to network. Available models: ${models.length}`;
+                    statusEl.style.color = "#059669";
+                })
+                .catch(err => {
+                    console.error("Failed to load models:", err);
+                    statusEl.innerText = "Backend Handshake Failed: " + err.message;
+                    statusEl.style.color = "#991B1B";
+                });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Global University Portal | Administrator Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0F294A;
+            --accent: #C89B3C;
+            --bg-color: #F8FAFC;
+            --card-bg: #FFFFFF;
+            --text-main: #334155;
+            --text-light: #64748B;
+            --border: #E2E8F0;
+            --success: #059669;
+            --danger: #DC2626;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar .title {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .navbar .title span {
+            color: var(--accent);
+        }
+
+        .navbar ul {
+            list-style: none;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .navbar ul li a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .navbar ul li a:hover {
+            color: var(--primary);
+            background-color: #F1F5F9;
+        }
+
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            flex: 1;
+            width: 100%;
+        }
+
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 30px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
+        }
+
+        h2 {
+            margin-bottom: 8px;
+            color: var(--primary);
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            margin-bottom: 24px;
+            color: var(--text-light);
+            font-size: 14px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            font-size: 13px;
+            color: var(--text-main);
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--card-bg);
+            transition: all 0.2s;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(15, 41, 74, 0.1);
+        }
+
+        button.btn-primary {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 10px;
+        }
+
+        button.btn-primary:hover {
+            background-color: #0b1f38;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-error {
+            background-color: #FEF2F2;
+            color: #991B1B;
+            border: 1px solid #F87171;
+        }
+
+        .alert-success {
+            background-color: #ECFDF5;
+            color: #065F46;
+            border: 1px solid #34D399;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 10px;
+        }
+
+        th,
+        td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        th {
+            background-color: var(--bg-color);
+            font-weight: 600;
+            color: var(--text-light);
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        th:first-child {
+            border-top-left-radius: 8px;
+        }
+
+        th:last-child {
+            border-top-right-radius: 8px;
+        }
+
+        tr:hover td {
+            background-color: #F1F5F9;
+        }
+
+        .btn-remove {
+            background-color: var(--danger);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .btn-remove:hover {
+            opacity: 0.9;
+        }
+
+        .badge-admin {
+            background-color: #DBEAFE;
+            color: #1E40AF;
+            border: 1px solid #BFDBFE;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-faculty {
+            background-color: #F3F4F6;
+            color: #4B5563;
+            border: 1px solid #E5E7EB;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="navbar">
+        <div class="title">🏛️ Global University <span>Portal</span></div>
+        <ul>
+            <li><a href="/papers">Papers Hub</a></li>
+            <li><a href="/upload">Upload</a></li>
+            <li><a href="/logs">Activity Logs</a></li>
+            {% if nav_can_manage_users %}
+            <li><a href="/admin">Manage Users</a></li>
+            {% endif %}
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </div>
+
+    <div class="container">
+
+        {% if message %}
+        <div class="alert {% if success %}alert-success{% else %}alert-error{% endif %}">
+            {{ message }}
+        </div>
+        {% endif %}
+
+        <div class="layout-grid">
+
+            <!-- Left Column: Add User Form -->
+            <div class="card" style="height: fit-content;">
+                <h2>Provision New Faculty</h2>
+                <p class="subtitle">Grant a user access to the secure network.</p>
+
+                <form method="POST">
+                    <input type="hidden" name="add_user" value="1">
+
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" name="name" required placeholder="Dr. John Doe">
+                    </div>
+
+                    <div class="form-group">
+                        <label>University Email</label>
+                        <input type="email" name="email" required placeholder="johndoe@global.edu">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Temporary Password</label>
+                        <input type="password" name="password" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Role / Clearance</label>
+                        <select name="role" required>
+                            <option value="Faculty">Standard Faculty</option>
+                            <option value="Admin">Systems Administrator</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Department Affiliation</label>
+                        <input type="text" name="branch" required placeholder="e.g. Computer Science">
+                    </div>
+
+                    <button type="submit" class="btn-primary">Provision Account</button>
+                </form>
+            </div>
+
+            <!-- Right Column: User Registry -->
+            <div class="card" style="overflow-x: auto;">
+                <h2>Active Personnel Registry</h2>
+                <p class="subtitle">Complete list of registered personnel with system access.</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Personnel</th>
+                            <th>Email Address</th>
+                            <th>Department</th>
+                            <th>Clearance</th>
+                            <th>Revocation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for u in users %}
+                        <tr>
+                            <td style="font-weight: 500; color: var(--primary);">{{ u.name }}</td>
+                            <td style="color: var(--text-light);">{{ u.email }}</td>
+                            <td>{{ u.branch }}</td>
+                            <td>
+                                {% if u.role.lower() == 'admin' %}
+                                <span class="badge-admin">Administrator</span>
+                                {% else %}
+                                <span class="badge-faculty">{{ u.role }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <form method="POST" style="margin: 0;"
+                                    onsubmit="return confirm('WARNING: Are you sure you want to revoke access for {{ u.email }}?');">
+                                    <input type="hidden" name="remove_email" value="{{ u.email }}">
+                                    <button type="submit" class="btn-remove">Revoke</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+
+</html>
