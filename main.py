@@ -8,19 +8,33 @@ from fpdf import FPDF
 
 from engine import read_syllabus, generate_with_retries, save_to_docx, analyze_paper_quality
 
+# Load local .env file if it exists (highly useful for local development)
+if os.path.exists(".env"):
+    with open(".env", "r", encoding="utf-8") as f:
+        for line in f:
+            stripped = line.strip()
+            if stripped and not stripped.startswith("#") and "=" in stripped:
+                key, val = stripped.split("=", 1)
+                os.environ[key.strip()] = val.strip().strip('"').strip("'")
+
 # ------------------ APP SETUP ------------------
 
 app = Flask(__name__)
 app.secret_key = "temporary-secret-key"  # OK for local dev
 
-UPLOAD_FOLDER = "uploads"
-OUTPUT_FOLDER = "outputs"
+is_vercel = os.environ.get("VERCEL") == "1" or "AWS_LAMBDA_FUNCTION_NAME" in os.environ
+
+if is_vercel:
+    UPLOAD_FOLDER = "/tmp/uploads"
+    OUTPUT_FOLDER = "/tmp/outputs"
+    DB_NAME = "/tmp/history.db"
+else:
+    UPLOAD_FOLDER = "uploads"
+    OUTPUT_FOLDER = "outputs"
+    DB_NAME = "history.db"
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
-
-# ------------------ DATABASE SETUP ------------------
-DB_NAME = "history.db"
 
 def init_db():
     conn = sqlite3.connect(DB_NAME)
@@ -190,7 +204,8 @@ else:
         raise FileNotFoundError("Firebase credentials not found. Please set FIREBASE_CREDENTIALS env var or provide firebase_service_account.json locally.")
     cred = credentials.Certificate(FIREBASE_CRED_PATH)
 
-firebase_admin.initialize_app(cred)
+if not firebase_admin._apps:
+    firebase_admin.initialize_app(cred)
 
 # Firebase Web API Key (from Firebase Console -> Project Settings)
 # You could also make this an environment variable: os.environ.get("FIREBASE_API_KEY", "your_api_key")
@@ -317,6 +332,10 @@ def settings():
     uid = session.get("uid")
     message = None
     success = False
+
+    if request.args.get("error") == "api_key_required":
+        message = "Please configure your OpenRouter API Key to start generating question papers."
+        success = False
     
     if request.method == "POST":
         api_key = request.form.get("api_key", "").strip()
@@ -330,7 +349,7 @@ def settings():
         
     current_key = get_user_api_key(uid)
     is_configured = current_key is not None and len(current_key) > 0
-    masked_key = f"{current_key[:8]}...{current_key[-4:]}" if is_configured and len(current_key) > 12 else ""
+    masked_key = f"{current_key[:8]}...{current_key[-4:]}" if is_configured and len(current_key) > 12 else (current_key if current_key else "")
         
     return render_template("settings.html", is_configured=is_configured, masked_key=masked_key, message=message, success=success)
 
@@ -340,6 +359,19 @@ def login():
     if request.method == "POST":
         email = request.form.get("email")
         password = request.form.get("password")
+
+        if not FIREBASE_API_KEY:
+            try:
+                user_record = auth.get_user_by_email(email)
+                uid = user_record.uid
+                session["user"] = email
+                session["uid"] = uid
+                access = _refresh_session_access()
+                if access["can_manage_users"]:
+                    return redirect(url_for("admin_dashboard"))
+                return redirect(url_for("upload"))
+            except Exception:
+                return render_template("login.html", error="User not found or Firebase API Key not configured.")
 
         payload = {
             "email": email,
@@ -400,7 +432,7 @@ def upload():
 
         try:
             raw = read_syllabus(syllabus_path)
-            model_id = request.form.get("model", "mistralai/mistral-7b-instruct")
+            model_id = request.form.get("model", "google/gemini-2.5-flash")
             difficulty = request.form.get("difficulty", "Medium")
             exam_format = request.form.get("exam_format", "End-Semester")
             
@@ -424,7 +456,7 @@ def upload():
             past_papers_text = "\n---\n".join([edit[0] for edit in past_edits]) if past_edits else ""
             api_key = get_user_api_key(user_uid)
             if not api_key:
-                return redirect(url_for("settings"))
+                return redirect(url_for("settings", error="api_key_required"))
 
             # Generation Execution
             paper = generate_with_retries(raw, api_key=api_key, model_id=model_id, difficulty=difficulty, exam_format=exam_format, past_papers_text=past_papers_text)
@@ -541,8 +573,12 @@ def editor(paper_id):
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
 
-    # Check if paper exists and belongs to user
-    c.execute("SELECT * FROM papers WHERE id = ? AND user_uid = ?", (paper_id, user_uid))
+    # Check if paper exists and belongs to user (or allow Admins/Deans to access all papers)
+    access = _refresh_session_access()
+    if access["is_admin"] or access["is_dean"]:
+        c.execute("SELECT * FROM papers WHERE id = ?", (paper_id,))
+    else:
+        c.execute("SELECT * FROM papers WHERE id = ? AND user_uid = ?", (paper_id, user_uid))
     paper = c.fetchone()
     
     if not paper:
@@ -570,7 +606,12 @@ def get_paper_analytics(paper_id):
     
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
-    c.execute("SELECT syllabus_text FROM papers WHERE id = ? AND user_uid = ?", (paper_id, user_uid))
+    
+    access = _refresh_session_access()
+    if access["is_admin"] or access["is_dean"]:
+        c.execute("SELECT syllabus_text FROM papers WHERE id = ?", (paper_id,))
+    else:
+        c.execute("SELECT syllabus_text FROM papers WHERE id = ? AND user_uid = ?", (paper_id, user_uid))
     paper_record = c.fetchone()
     
     if not paper_record or not paper_record[0]:
@@ -610,8 +651,12 @@ def save_edit(paper_id):
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
 
-    # Verify ownership
-    c.execute("SELECT current_version FROM papers WHERE id = ? AND user_uid = ?", (paper_id, user_uid))
+    # Verify ownership (or allow Admins/Deans)
+    access = _refresh_session_access()
+    if access["is_admin"] or access["is_dean"]:
+        c.execute("SELECT current_version FROM papers WHERE id = ?", (paper_id,))
+    else:
+        c.execute("SELECT current_version FROM papers WHERE id = ? AND user_uid = ?", (paper_id, user_uid))
     paper = c.fetchone()
     
     if not paper:
@@ -645,8 +690,12 @@ def view_version(paper_id, version):
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
 
-    # Verify ownership
-    c.execute("SELECT * FROM papers WHERE id = ? AND user_uid = ?", (paper_id, user_uid))
+    # Verify ownership (or allow Admins/Deans)
+    access = _refresh_session_access()
+    if access["is_admin"] or access["is_dean"]:
+        c.execute("SELECT * FROM papers WHERE id = ?", (paper_id,))
+    else:
+        c.execute("SELECT * FROM papers WHERE id = ? AND user_uid = ?", (paper_id, user_uid))
     paper = c.fetchone()
     
     if not paper:
@@ -678,8 +727,12 @@ def restore_version(paper_id, version):
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
 
-    # Verify ownership
-    c.execute("SELECT current_version FROM papers WHERE id = ? AND user_uid = ?", (paper_id, user_uid))
+    # Verify ownership (or allow Admins/Deans)
+    access = _refresh_session_access()
+    if access["is_admin"] or access["is_dean"]:
+        c.execute("SELECT current_version FROM papers WHERE id = ?", (paper_id,))
+    else:
+        c.execute("SELECT current_version FROM papers WHERE id = ? AND user_uid = ?", (paper_id, user_uid))
     paper = c.fetchone()
     
     if not paper:
@@ -720,8 +773,12 @@ def download(paper_id):
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
 
-    # Verify ownership and get latest content
-    c.execute("SELECT p.filename, e.content FROM papers p JOIN edits e ON p.id = e.paper_id WHERE p.id = ? AND p.user_uid = ? ORDER BY e.version DESC LIMIT 1", (paper_id, user_uid))
+    # Verify ownership and get latest content (or allow Admins/Deans)
+    access = _refresh_session_access()
+    if access["is_admin"] or access["is_dean"]:
+        c.execute("SELECT p.filename, e.content FROM papers p JOIN edits e ON p.id = e.paper_id WHERE p.id = ? ORDER BY e.version DESC LIMIT 1", (paper_id,))
+    else:
+        c.execute("SELECT p.filename, e.content FROM papers p JOIN edits e ON p.id = e.paper_id WHERE p.id = ? AND p.user_uid = ? ORDER BY e.version DESC LIMIT 1", (paper_id, user_uid))
     result = c.fetchone()
     
     conn.close()
@@ -760,8 +817,12 @@ def download_pdf(paper_id):
     conn = sqlite3.connect(DB_NAME)
     c = conn.cursor()
 
-    # Verify ownership and get latest content
-    c.execute("SELECT p.filename, e.content FROM papers p JOIN edits e ON p.id = e.paper_id WHERE p.id = ? AND p.user_uid = ? ORDER BY e.version DESC LIMIT 1", (paper_id, user_uid))
+    # Verify ownership and get latest content (or allow Admins/Deans)
+    access = _refresh_session_access()
+    if access["is_admin"] or access["is_dean"]:
+        c.execute("SELECT p.filename, e.content FROM papers p JOIN edits e ON p.id = e.paper_id WHERE p.id = ? ORDER BY e.version DESC LIMIT 1", (paper_id,))
+    else:
+        c.execute("SELECT p.filename, e.content FROM papers p JOIN edits e ON p.id = e.paper_id WHERE p.id = ? AND p.user_uid = ? ORDER BY e.version DESC LIMIT 1", (paper_id, user_uid))
     result = c.fetchone()
     conn.close()
 
