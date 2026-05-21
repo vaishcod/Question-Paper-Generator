@@ -21,7 +21,7 @@ def get_available_models(api_key: str) -> list:
         print(f"Error fetching models: {e}")
     return []
 
-def generate_text(prompt: str, api_key: str, model_id: str = "mistralai/mistral-7b-instruct") -> str:
+def generate_text(prompt: str, api_key: str, model_id: str = "google/gemini-2.5-flash") -> str:
     if not api_key:
         raise ValueError("API Key is missing. Please configure your OpenRouter API Key in settings.")
         
@@ -31,7 +31,8 @@ def generate_text(prompt: str, api_key: str, model_id: str = "mistralai/mistral-
         messages=[
             {"role": "user", "content": prompt}
         ],
-        temperature=0.7
+        temperature=0.7,
+        max_tokens=4000
     )
 
     return response.choices[0].message.content
