@@ -7,13 +7,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #0F294A;
-            --accent: #C89B3C;
-            --bg-color: #F8FAFC;
+            --primary: #4F46E5;
+            --accent: #FF80B5;
+            --bg-color: #1E1B4B;
             --card-bg: #FFFFFF;
-            --text-main: #334155;
-            --text-light: #64748B;
-            --border: #E2E8F0;
+            --text-main: #1E1B4B;
+            --text-light: #6366F1;
+            --border: #F5E6EB;
         }
 
         * {
@@ -82,14 +82,14 @@
 
 
         header {
-            background-color: var(--card-bg);
+            background-color: transparent;
             padding: 40px 20px;
             text-align: center;
-            border-bottom: 1px solid var(--border);
+            border-bottom: none;
         }
 
         header h1 {
-            color: var(--primary);
+            color: #FFFFFF;
             font-size: 28px;
             font-weight: 700;
             margin-bottom: 8px;
@@ -97,7 +97,7 @@
         }
 
         header p {
-            color: var(--text-light);
+            color: #FF80B5;
             font-size: 16px;
         }
 
@@ -165,16 +165,18 @@
         }
 
         .file-drop-zone {
-            border: 2px dashed var(--border);
+            border: 2px dashed var(--accent);
             border-radius: 8px;
             padding: 30px;
             text-align: center;
-            background-color: var(--bg-color);
-            transition: border-color 0.2s;
+            background-color: #FFF5F7;
+            color: var(--text-main);
+            transition: all 0.2s;
         }
 
         .file-drop-zone:hover {
             border-color: var(--primary);
+            background-color: #F0F1FF;
         }
 
         .file-drop-zone input[type="file"] {
@@ -182,6 +184,7 @@
             border: none;
             padding: 0;
             color: var(--text-main);
+            cursor: pointer;
         }
 
         button.submit-btn {
@@ -309,7 +312,7 @@
                     <div class="form-group full-width">
                         <label>AI Generation Core</label>
                         <select name="model" id="model-select" required>
-                            <option value="mistralai/mistral-7b-instruct">Mistral 7B Instruct (Default)</option>
+                            <option value="google/gemini-2.5-flash">Google Gemini 2.5 Flash (BYOK Default)</option>
                         </select>
                         <small id="model-status"
                             style="color: var(--text-light); margin-top: 6px; display: block; font-size: 12px;">Establishing
@@ -360,11 +363,12 @@
                 .then(data => {
                     const models = data.models || [];
                     if (models.length === 0) {
-                        statusEl.innerText = "Error: System backend unreachable.";
-                        statusEl.style.color = "#991B1B";
+                        statusEl.innerText = "API key missing or backend offline. Defaulting to Gemini 2.5 Flash.";
+                        statusEl.style.color = "#E5A93C"; // Warning soft orange
                         return;
                     }
 
+                    // Preserve existing fallback option in case we want to re-add it or clear safely
                     selectEl.innerHTML = "";
 
                     models.forEach(m => {
@@ -376,9 +380,7 @@
                         }
                         opt.textContent = modelName;
 
-                        if (m.id === "meta-llama/llama-3-8b-instruct:free") {
-                            opt.selected = true;
-                        } else if (m.id === "mistralai/mistral-7b-instruct" && !selectEl.querySelector("option[selected]")) {
+                        if (m.id === "google/gemini-2.5-flash") {
                             opt.selected = true;
                         }
                         selectEl.appendChild(opt);
@@ -388,8 +390,8 @@
                 })
                 .catch(err => {
                     console.error("Failed to load models:", err);
-                    statusEl.innerText = "Backend Handshake Failed: " + err.message;
-                    statusEl.style.color = "#991B1B";
+                    statusEl.innerText = "System Handshake Offline. Defaulting to Gemini 2.5 Flash.";
+                    statusEl.style.color = "#E5A93C"; // Warning soft orange
                 });
         });
     </script>
