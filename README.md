@@ -8,7 +8,7 @@ Built with modern web technologies and powered by Gemini 2.5 Flash via OpenRoute
 🌐 Live Demo
 
 🔗 Application URL
-(https://question-paper-generator-six.vercel.app/login)
+https://question-paper-generator-ivory.vercel.app/upload
 
 
 ✨ Core Features
