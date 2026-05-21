@@ -5,7 +5,7 @@ import requests
 import sqlite3
 import firebase_admin
 
-from firebase_admin import credentials
+from firebase_admin import credentials , auth
 from fpdf import FPDF
 
 from engine import read_syllabus, generate_with_retries, save_to_docx, analyze_paper_quality
