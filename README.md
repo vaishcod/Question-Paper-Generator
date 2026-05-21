@@ -1,4 +1,4 @@
-<img width="1402" height="756" alt="image" src="https://github.com/user-attachments/assets/fd00b350-f41a-4741-8e83-663181de3290" />🏛️ AI-Powered College Question Paper Generator
+🏛️ AI-Powered College Question Paper Generator
 
 An enterprise-grade academic assessment platform designed for universities and higher education institutions. The system enables faculty members to securely upload course syllabi and generate well-structured, syllabus-aligned examination papers using advanced AI.
 
