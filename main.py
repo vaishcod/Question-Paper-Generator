@@ -1,9 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for, session, send_file, jsonify
 import os
+import json
 import requests
 import sqlite3
 import firebase_admin
-from firebase_admin import credentials, auth
+from firebase_admin import credentials
 from fpdf import FPDF
 
 from engine import read_syllabus, generate_with_retries, save_to_docx, analyze_paper_quality
@@ -16,6 +17,11 @@ if os.path.exists(".env"):
             if stripped and not stripped.startswith("#") and "=" in stripped:
                 key, val = stripped.split("=", 1)
                 os.environ[key.strip()] = val.strip().strip('"').strip("'")
+
+firebase_config = json.loads(os.environ["FIREBASE_CREDENTIALS"])
+
+cred = credentials.Certificate(firebase_config)
+firebase_admin.initialize_app(cred)
 
 # ------------------ APP SETUP ------------------
 
